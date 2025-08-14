@@ -1,0 +1,92 @@
+Can yoiu a very beautiful looking webpage in which students can upload their questions papers in format of pdf/pnd or text and then it wille xtrcat the text and generate the solutions for the given question papaper,for backend api key use gemmi api key ask me while preparing i willl give, also make sure that the api key which i guve complety hidden and not public cant see it, as many times its public and i get ocr error,so make sure its complety hidden even in backend and freontend,also keep  hthe theme futureistic and simple,and add some japanese art image as background as image which the orchids website has,also take this code as backend refrences# Install dependencies
+!sudo apt install tesseract-ocr
+!pip install pytesseract requests pillow
+
+# Import libraries
+from google.colab import files
+from PIL import Image, ImageEnhance, ImageFilter
+import pytesseract
+import requests
+import json
+from IPython.display import Markdown, display
+from getpass import getpass
+
+# Get OpenRouter API key
+openrouter_api_key = getpass('Enter your OpenRouter API key: ')
+
+# Function to get available models
+def get_available_models(api_key):
+    url = "https://openrouter.ai/api/v1/models"
+    headers = {"Authorization": f"Bearer {api_key}"}
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        return [model['id'] for model in response.json()['data'] if ':free' in model['id']]
+    else:
+        print(f"Error fetching models: {response.status_code} - {response.text}")
+        return []
+
+# Input processing function
+def process_input():
+    choice = input("Enter 'image' to upload a PNG or 'text' to paste text: ").lower()
+    if choice == 'image':
+        uploaded = files.upload()
+        if not uploaded:
+            return None
+        image_path = list(uploaded.keys())[0]
+        image = Image.open(image_path)
+        # Optional preprocessing for better OCR
+        image = image.convert('L')  # Grayscale
+        image = ImageEnhance.Contrast(image).enhance(2.0)  # Increase contrast
+        image = image.filter(ImageFilter.SHARPEN)  # Sharpen
+        extracted_text = pytesseract.image_to_string(image)
+        return extracted_text
+    elif choice == 'text':
+        return input("Paste the question paper text: ")
+    else:
+        print("Invalid choice. Try again.")
+        return None
+
+# Solution generation function with gemmi api
+def get_solutions(questions, api_key):
+    url = "https://gemmi.ai/api/v1/chat/completions"
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json"
+    }
+    # Fetch available free models and select the first one
+    free_models = get_available_models(api_key)
+    if not free_models:
+        print("No free models available. Please check your API key or OpenRouter status.")
+        return None
+    model_id = free_models[0]  # Use the first available free model
+    print(f"Using model: {model_id}")
+
+    prompt = f"Provide detailed solutions to the following questions:\n{questions}"
+    data = {
+        "model": model_id,
+        "messages": [{"role": "user", "content": prompt}],
+        "max_tokens": 2000,
+        "temperature": 0.7
+    }
+    response = requests.post(url, headers=headers, json=data)
+    print(f"Status Code: {response.status_code}")
+    print(f"Response Text: {response.text}")
+    if response.status_code == 200:
+        try:
+            response_data = response.json()
+            print(f"Response JSON: {json.dumps(response_data, indent=2)}")
+            return response_data['choices'][0]['message']['content']
+        except (KeyError, json.JSONDecodeError) as e:
+            print(f"Error parsing response: {e}")
+            return None
+    else:
+        print(f"Error: {response.status_code} - {response.text}")
+        return None
+
+# Main execution
+questions = process_input()
+if questions:
+    print("Extracted Questions:\n", questions)
+    solutions = get_solutions(questions, openrouter_api_key)
+    if solutions:
+        display(Markdown(solutions)) promt this neaty so that i can get a website

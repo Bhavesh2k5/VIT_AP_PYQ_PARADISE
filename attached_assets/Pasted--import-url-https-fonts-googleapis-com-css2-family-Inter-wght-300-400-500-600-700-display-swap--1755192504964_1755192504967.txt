@@ -1,0 +1,72 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: transparent; /* Fully transparent! */
+  --foreground: hsl(210, 40%, 98%);
+  --card: transparent;
+  --card-foreground: hsl(210, 40%, 98%);
+  --popover: transparent;
+  --popover-foreground: hsl(210, 40%, 98%);
+  --primary: hsl(221, 83%, 53%);
+  --primary-foreground: hsl(210, 40%, 98%);
+  --secondary: rgba(17,24,39,0.2); /* very light overlay */
+  --secondary-foreground: hsl(210, 40%, 98%);
+  --muted: transparent;
+  --muted-foreground: hsl(215, 20%, 65%);
+  --accent: transparent;
+  --accent-foreground: hsl(210, 40%, 98%);
+  --destructive: hsl(0, 62%, 30%);
+  --destructive-foreground: hsl(210, 40%, 98%);
+  --border: rgba(200,200,200,0.2);
+  --input: rgba(200,200,200,0.1);
+  --ring: rgba(224, 71, 4, 0.05);
+  --chart-1: hsl(220, 70%, 50%);
+  --chart-2: hsl(160, 60%, 45%);
+  --chart-3: hsl(30, 80%, 55%);
+  --chart-4: hsl(280, 65%, 60%);
+  --chart-5: hsl(340, 75%, 55%);
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+  --font-serif: Georgia, serif;
+  --font-mono: Menlo, monospace;
+  --radius: 1rem;
+}
+
+.dark {
+  --background: transparent;
+  --foreground: hsl(210, 40%, 98%);
+  --card: transparent;
+  --card-foreground: hsl(210, 40%, 98%);
+  --popover: transparent;
+  --popover-foreground: hsl(210, 40%, 98%);
+}
+
+/* --- Use transparent for all backgrounds --- */
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply font-sans antialiased bg-background text-foreground overflow-x-hidden;
+    background: transparent !important; /* For final fallback */
+  }
+}
+
+/* --- Enhanced glassmorphism for contrast on transparency --- */
+@layer utilities {
+  .glassmorphism {
+    background: rgba(30,40,70,0.15); /* slightly more visible on total trans bg */
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+  }
+  .glassmorphism-dark {
+    background: rgba(10, 20, 35, 0.10);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+  /* ...rest of your utilities remain same... */
+}
