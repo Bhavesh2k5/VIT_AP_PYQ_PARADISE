@@ -16,6 +16,7 @@ export default defineConfig({
         ]
       : []),
   ],
+  base: "/VIT_AP_PYQ_PARADISE/",
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "client", "src"),
